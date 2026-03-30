@@ -1,4 +1,4 @@
-# ⚡ 電費分攤助手 | Electricity Bill Splitter
+# ⚡電費分攤助手  Electricity Bill Splitter
 
 ![Android](https://img.shields.io/badge/Platform-Android-brightgreen.svg) 
 ![Kotlin](https://img.shields.io/badge/Language-Kotlin-blue.svg) 
