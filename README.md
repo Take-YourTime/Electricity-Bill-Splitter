@@ -1,2 +1,79 @@
-# Electronic Bill Calculater
-Electronic Bill Calculater
+# ⚡ 電費分攤助手 | Electricity Bill Splitter
+
+![Android](https://img.shields.io/badge/Platform-Android-brightgreen.svg) 
+![Kotlin](https://img.shields.io/badge/Language-Kotlin-blue.svg) 
+![Compose](https://img.shields.io/badge/UI-Jetpack%20Compose-orange.svg)
+
+這是一款專為多房分租或居家環境設計的 Android 應用程式。它能根據台電帳單資訊與各別住戶電表讀數，公平地分攤個人電費與公電費用。
+
+A specialized Android utility designed for multi-tenant or shared housing. It fairly distributes individual and public electricity costs based on official bill info and individual meter readings.
+
+---
+
+## ✨ 功能特點 | Features
+
+- **公平公電分攤 (Fair Allocation)**: 自動試算公電度數，並精確平均分配給所有住戶。
+- **歷史紀錄管理 (History Management)**: 獨立頁面管理，支援隨時查看、刪除或重新代入舊數據。
+- **用電分析圖表 (Data Analytics)**: 以圓餅圖視覺化呈現各住戶的總用電度數與電費比例。
+- **詳細試算過程 (Detailed Breakdown)**: 展示三步驟試算邏輯，小數點後兩位四捨五入，清清楚楚。
+- **多語系支援 (Multi-language)**: 支援繁體中文與英文介面即時切換。
+- **本地持久儲存 (Room Database)**: 使用 Room 資料庫儲存住戶名單、前期度數，換頁或重開 App 都不遺失。
+
+---
+
+## 📖 使用指南 | User Guide
+
+1. **輸入帳單總資訊 (Enter Bill Info)** 在主頁上方輸入台電帳單上的「總金額」與「總用電度數」。
+   
+2. **管理住戶名單 (Manage Residents)** 點擊右下角的「+」按鈕新增住戶，可點擊名稱欄位來自訂稱呼。
+
+3. **填寫電表讀數 (Enter Meter Readings)** 輸入每位住戶電表的「前期」與「當期」讀數，系統會自動算出個人用電度數。
+
+4. **計算與存檔 (Calculate & Save)** 點擊「計算並存檔」後，系統會分配公電費並儲存紀錄至歷史清單。
+
+5. **查看詳細過程 (Detailed Breakdown)** 計算完成後，點擊下方的「查看詳細計算過程」按鈕，獲取完整試算表。
+
+---
+
+## 🧮 計算邏輯 | Calculation Logic
+
+本程式採用以下精確公式進行分攤：
+
+1. **每度單價 (Unit Price)**:  
+   $$Price_{unit} = \frac{Total\ Amount}{Total\ Units}$$
+
+2. **公電度數 (Public Units)**:  
+   $$Units_{public} = Total\ Units - \sum Individual\ Usages$$
+
+3. **最終應付金額 (Final Cost)**:  
+   $$Cost_{final} = (Usage \times Price_{unit}) + \frac{Units_{public} \times Price_{unit}}{Residents\ Count}$$
+
+---
+
+## 🛠️ 開發技術 | Tech Stack
+
+| 項目 | 技術 / 函式庫 |
+| :--- | :--- |
+| **程式語言** | Kotlin |
+| **介面框架** | Jetpack Compose (Material 3) |
+| **頁面導覽** | Jetpack Navigation |
+| **資料庫** | Room Persistence Library |
+| **資料解析** | Gson |
+| **架構模式** | MVVM (ViewModel + State) |
+| **視覺圖標** | O3 Minimalist Style (Adaptive Icons) |
+
+---
+
+## 📸 介面預覽 | UI Preview
+
+*(您可以自行在此處加入您的 App 截圖連結)*
+- 主頁面: `[Main Page Screenshot]`
+- 歷史紀錄: `[History Page Screenshot]`
+- 數據分析: `[Analysis Page Screenshot]`
+
+---
+
+## 📝 備註 (Notes)
+
+- 所有金額計算均採四捨五入至整數，度數顯示至小數點後兩位。
+- 數據皆儲存於手機本地端，確保您的隱私。
