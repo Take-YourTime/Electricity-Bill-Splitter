@@ -25,6 +25,9 @@ class MainViewModel : ViewModel() {
     // 新增：是否已經計算過？（控制顯示詳細過程按鈕）
     var isCalculated by mutableStateOf(false)
 
+    // 語言設定
+    var currentLanguage by mutableStateOf("zh") // "zh" 或 "en"
+
     /* --- 住戶管理功能 --- */
     fun addResident() {
         residents.add(Resident("住戶 ${'A' + residents.size}"))
@@ -111,5 +114,23 @@ class MainViewModel : ViewModel() {
 
     fun deleteRecord(db: AppDatabase, record: BillRecord) {
         viewModelScope.launch { db.billDao().deleteRecord(record) }
+    }
+
+    // 分析數據聚合邏輯
+    fun getAggregatedData(): Pair<Map<String, Double>, Map<String, Double>> {
+        val unitMap = mutableMapOf<String, Double>()
+        val costMap = mutableMapOf<String, Double>()
+        val gson = Gson()
+        val listType = object : com.google.gson.reflect.TypeToken<List<Resident>>() {}.type
+
+        historyList.forEach { record ->
+            val savedResidents: List<Resident> = gson.fromJson(record.residentsJson, listType)
+            savedResidents.forEach { r ->
+                // 根據名稱累加度數與金額
+                unitMap[r.name] = (unitMap[r.name] ?: 0.0) + r.usage
+                costMap[r.name] = (costMap[r.name] ?: 0.0) + r.resultAmount
+            }
+        }
+        return Pair(unitMap, costMap)
     }
 }

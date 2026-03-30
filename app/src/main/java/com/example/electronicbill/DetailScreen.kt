@@ -38,39 +38,35 @@ fun DetailScreen(vm: MainViewModel, onBack: () -> Unit) {
             modifier = Modifier.padding(padding).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // --- 區塊 1: 基礎數據與單價 ---
+            // 第一步：單價
             item {
                 Card {
                     Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-                        Text("第一步：計算總度單價", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                        Text("第一步：計算每度電單價", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                         Divider(modifier = Modifier.padding(vertical = 8.dp))
-                        Text("總金額 (A)：$${totalBill} 元")
-                        Text("總度數 (B)：${totalUnits} 度")
-                        Text("計算公式：單價 = A / B")
-                        Text(
-                            "每度單價：$${String.format("%.4f", unitPrice)} 元/度",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.ExtraBold
-                        )
+                        Text("總金額 (A)：$${String.format("%.2f", totalBill)} 元")
+                        Text("總度數 (B)：${String.format("%.2f", totalUnits)} 度")
+                        Text("每度單價：$${String.format("%.2f", unitPrice)} 元/度")
                     }
                 }
             }
 
-            // --- 區塊 2: 各戶用電總和 ---
+            // 第二步：個人用電
             item {
                 Card {
                     Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-                        Text("第二步：統計住戶用電", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                        Text("第二步：統計個人用電", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                         Divider(modifier = Modifier.padding(vertical = 8.dp))
 
-                        // 列出每一戶
                         vm.residents.forEach { r ->
-                            val used = (r.currReading.toDoubleOrNull() ?: 0.0) - (r.prevReading.toDoubleOrNull() ?: 0.0)
-                            Text("${r.name}：${used} 度")
+                            val used = r.usage
+                            val price = used * unitPrice
+                            // 這裡也統一小數點兩位
+                            Text("${r.name}：${String.format("%.2f", used)} 度, ${String.format("%.2f", price)} 元")
                         }
 
                         Text(
-                            "住戶用電總和 (C)：${sumIndividualUnits} 度",
+                            "住戶用電總和 (C)：${String.format("%.2f", sumIndividualUnits)} 度",
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(top = 8.dp)
                         )
@@ -78,35 +74,26 @@ fun DetailScreen(vm: MainViewModel, onBack: () -> Unit) {
                 }
             }
 
-            // --- 區塊 3: 公電度數與費用 ---
+            // 第三步：分配公電
             item {
                 Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
                     Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
-                        Text("第三步：分配公電", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
+                        Text("第三步：公電費用分配", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
                         Divider(modifier = Modifier.padding(vertical = 8.dp))
 
-                        Text("公電度數 = 總度數(B) - 住戶總和(C)")
-                        Text("= ${totalUnits} - ${sumIndividualUnits} = ${String.format("%.1f", vm.publicUnitsResult)} 度")
+                        Text("公電度數：${String.format("%.2f", vm.publicUnitsResult)} 度")
 
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text("公電總費 = 公電度數 * 每度單價")
                         val publicTotalCost = vm.publicUnitsResult * unitPrice
-                        Text("= ${String.format("%.1f", vm.publicUnitsResult)} * ${String.format("%.4f", unitPrice)} = $${String.format("%.1f", publicTotalCost)} 元")
+                        Text("公電總費用：$${String.format("%.2f", publicTotalCost)} 元")
 
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text("每人分攤 = 公電總費 / 住戶人數")
                         Text(
-                            "每人應付公電費：$${String.format("%.1f", vm.publicCostPerPersonResult)} 元",
+                            "每人應付公電費：$${String.format("%.2f", vm.publicCostPerPersonResult)} 元",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.ExtraBold
                         )
                     }
                 }
             }
-
-            // 底部空白
             item { Spacer(modifier = Modifier.height(50.dp)) }
         }
     }
