@@ -17,7 +17,7 @@ data class Resident(
 data class BillRecord(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val date: Long,
-    val totalBill: Double,
+    val totalAmount: Double,
     val totalUnits: Double,
     val residentsJson: String // 存儲住戶清單的 JSON
 )
