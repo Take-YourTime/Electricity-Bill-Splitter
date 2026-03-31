@@ -24,4 +24,22 @@ interface BillDao {
 @Database(entities = [BillRecord::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun billDao(): BillDao
+
+    // 單例模式確保全局只有一個資料庫實例
+    companion object {
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+
+        fun getDatabase(context: android.content.Context): AppDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "electric-db"
+                ).build()
+                INSTANCE = instance
+                instance
+            }
+        }
+    }
 }

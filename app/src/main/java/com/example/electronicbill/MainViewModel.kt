@@ -4,6 +4,8 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -27,6 +29,26 @@ class MainViewModel : ViewModel() {
 
     // 語言設定
     var currentLanguage by mutableStateOf("zh") // "zh" 或 "en"
+
+    // 資料庫操作的 Job 參考，確保在 ViewModel 清除時取消
+    private var dbJob: Job? = null
+
+    // --- 🚀 全域導覽鎖 ---
+    var isNavigating by mutableStateOf(false)
+        private set
+
+    // 封裝導覽執行器：確保 600ms 內只會執行一個導覽動作
+    fun performNavigation(action: () -> Unit) {
+        if (!isNavigating) {
+            isNavigating = true
+            action()
+            viewModelScope.launch {
+                // 這裡的延遲時間建議略長於 Compose 的預設轉場動畫 (約 300-500ms)
+                delay(700)
+                isNavigating = false
+            }
+        }
+    }
 
     /* --- 住戶管理功能 --- */
     fun addResident() {
@@ -86,7 +108,8 @@ class MainViewModel : ViewModel() {
     }
 
     fun initData(db: AppDatabase) {
-        viewModelScope.launch {
+        dbJob?.cancel()
+        dbJob = viewModelScope.launch {
             db.billDao().getAllRecordsFlow().collect { list ->
                 historyList = list
                 if (residents.isEmpty() && list.isNotEmpty()) {

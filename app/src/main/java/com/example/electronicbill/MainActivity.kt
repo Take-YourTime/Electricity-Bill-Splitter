@@ -2,6 +2,7 @@ package com.example.electronicbill
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,9 +11,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.filled.Analytics
-import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.Help
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,31 +29,53 @@ import java.util.*
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "electric-db"
-        ).build()
+        val db = AppDatabase.getDatabase(applicationContext)
 
         setContent {
             val viewModel = remember { MainViewModel() }
             val navController = rememberNavController()
 
-            LaunchedEffect(Unit) {
-                viewModel.initData(db)
-            }
+            LaunchedEffect(Unit) { viewModel.initData(db) }
 
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    // NavHost 路由配置
                     NavHost(navController = navController, startDestination = "main") {
-                        composable("main") { MainScreen(viewModel, db, navController) }
-                        composable("detail") { DetailScreen(viewModel, onBack = { navController.popBackStack() }) }
-                        composable("analysis") { AnalysisScreen(viewModel, onBack = { navController.popBackStack() }) }
-                        composable("language") { LanguageScreen(viewModel, onBack = { navController.popBackStack() }) }
-                        composable("settings") { SettingsScreen(viewModel, onBack = { navController.popBackStack() }) }
-                        composable("instructions") { InstructionsScreen(viewModel, onBack = { navController.popBackStack() }) }
-                        composable("history") { HistoryScreen(viewModel, db, onBack = { navController.popBackStack() }) }
+                        // 主頁面
+                        composable("main") {
+                            MainScreen(viewModel, db, navController)
+                        }
+
+                        // 其餘頁面：將 popBackStack 包裹在 performNavigation 中，確保退出時也會上鎖
+                        composable("detail") {
+                            DetailScreen(viewModel, onBack = {
+                                viewModel.performNavigation { navController.popBackStack() }
+                            })
+                        }
+                        composable("analysis") {
+                            AnalysisScreen(viewModel, onBack = {
+                                viewModel.performNavigation { navController.popBackStack() }
+                            })
+                        }
+                        composable("language") {
+                            LanguageScreen(viewModel, onBack = {
+                                viewModel.performNavigation { navController.popBackStack() }
+                            })
+                        }
+                        composable("settings") {
+                            SettingsScreen(viewModel, onBack = {
+                                viewModel.performNavigation { navController.popBackStack() }
+                            })
+                        }
+                        composable("instructions") {
+                            InstructionsScreen(viewModel, onBack = {
+                                viewModel.performNavigation { navController.popBackStack() }
+                            })
+                        }
+                        composable("history") {
+                            HistoryScreen(viewModel, db, onBack = {
+                                viewModel.performNavigation { navController.popBackStack() }
+                            })
+                        }
                     }
                 }
             }
@@ -72,7 +91,11 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
     val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault())
     val isZh = vm.currentLanguage == "zh"
 
-    // --- 1. 側邊選單側邊欄 ---
+    // 防護返回鍵：如果選單開著，先關選單
+    BackHandler(enabled = drawerState.isOpen) {
+        scope.launch { drawerState.close() }
+    }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -86,55 +109,37 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
 
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     item {
-                        NavigationDrawerItem(
-                            label = { Text(if (isZh) "歷史紀錄" else "History") },
-                            selected = false,
-                            icon = { Icon(Icons.Default.History, null) }, // 請確保匯入 Icons.Default.History
-                            onClick = {
-                                navController.navigate("history")
-                                scope.launch { drawerState.close() }
-                            }
+                        // 定義側邊欄導覽項目
+                        val navItems = listOf(
+                            Triple("history", if (isZh) "歷史紀錄" else "History", Icons.Default.History),
+                            Triple("analysis", if (isZh) "用電分析" else "Analysis", Icons.Default.Analytics),
+                            Triple("language", if (isZh) "語言設定" else "Language", Icons.Default.Language),
+                            Triple("instructions", if (isZh) "使用說明" else "Instructions", Icons.Default.Help),
+                            Triple("settings", if (isZh) "設定" else "Settings", Icons.Default.Settings)
                         )
 
-                        NavigationDrawerItem(
-                            label = { Text(if (isZh) "用電分析" else "Analysis") },
-                            selected = false,
-                            icon = { Icon(Icons.Default.Analytics, null) },
-                            onClick = {
-                                navController.navigate("analysis")
-                                scope.launch { drawerState.close() }
-                            }
-                        )
-                        NavigationDrawerItem(
-                            label = { Text(if (isZh) "語言設定" else "Language") },
-                            selected = false,
-                            icon = { Icon(Icons.Default.Language, null) },
-                            onClick = {
-                                navController.navigate("language")
-                                scope.launch { drawerState.close() }
-                            }
-                        )
-                        NavigationDrawerItem(
-                            label = { Text(if (isZh) "使用說明" else "Instructions") },
-                            selected = false,
-                            icon = { Icon(Icons.Default.Help, null) },
-                            onClick = {
-                                navController.navigate("instructions")
-                                scope.launch { drawerState.close() }
-                            }
-                        )
-                        NavigationDrawerItem(
-                            label = { Text(if (isZh) "設定" else "Settings") },
-                            selected = false,
-                            icon = { Icon(Icons.Default.Settings, null) },
-                            onClick = {
-                                navController.navigate("settings")
-                                scope.launch { drawerState.close() }
-                            }
-                        )
+                        navItems.forEach { (route, label, icon) ->
+                            NavigationDrawerItem(
+                                label = { Text(label) },
+                                selected = false,
+                                icon = { Icon(icon, null) },
+                                onClick = {
+                                    // 🚀 使用導覽鎖保護側邊欄跳轉
+                                    vm.performNavigation {
+                                        navController.navigate(route) {
+                                            popUpTo("main") { saveState = true }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                        scope.launch { drawerState.close() }
+                                    }
+                                }
+                            )
+                        }
+
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                         Text(
-                            text = if (isZh) "歷史紀錄" else "History",
+                            text = if (isZh) "快速載入" else "Quick Load",
                             modifier = Modifier.padding(16.dp),
                             style = MaterialTheme.typography.labelLarge
                         )
@@ -150,35 +155,36 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                             },
                             selected = false,
                             onClick = {
-                                vm.applyRecord(record)
-                                scope.launch { drawerState.close() }
-                            },
-                            badge = {
-                                IconButton(onClick = { vm.deleteRecord(db, record) }) {
-                                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red)
+                                // 代入紀錄不涉及頁面跳轉，但為了保險也可以加上導覽鎖檢查
+                                if (!vm.isNavigating) {
+                                    vm.applyRecord(record)
+                                    scope.launch { drawerState.close() }
                                 }
-                            },
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                            }
                         )
                     }
                 }
             }
         },
         content = {
-            // --- 2. 主畫面內容 (剛才你漏掉的部分) ---
             Scaffold(
                 topBar = {
                     CenterAlignedTopAppBar(
                         title = { Text(if (isZh) "⚡ 電費分攤助手 ⚡" else "⚡ Elec. Bill Splitter ⚡") },
                         navigationIcon = {
-                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            IconButton(onClick = {
+                                // 🎯 修正痛點：只有在「沒有正在導覽」且「選單關閉」時才允許點擊
+                                if (!vm.isNavigating && drawerState.isClosed) {
+                                    scope.launch { drawerState.open() }
+                                }
+                            }) {
                                 Icon(Icons.Default.Menu, contentDescription = "Menu")
                             }
                         }
                     )
                 },
                 floatingActionButton = {
-                    FloatingActionButton(onClick = { vm.addResident() }) {
+                    FloatingActionButton(onClick = { if (!vm.isNavigating) vm.addResident() }) {
                         Icon(Icons.Default.Add, contentDescription = "Add")
                     }
                 }
@@ -187,7 +193,6 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                     modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // 帳單總資訊
                     item {
                         Text(if (isZh) "帳單資訊" else "Bill Info", style = MaterialTheme.typography.titleMedium)
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -207,7 +212,7 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                             )
                         }
                         Button(
-                            onClick = { vm.calculate(db) },
+                            onClick = { if (!vm.isNavigating) vm.calculate(db) },
                             modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
                         ) {
                             Text(if (isZh) "計算並存檔" else "Calculate & Save")
@@ -215,7 +220,6 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
                     }
 
-                    /* --- 區塊：帳單摘要資訊 --- */
                     if (vm.isCalculated) {
                         item {
                             val totalBill = vm.totalAmount.toDoubleOrNull() ?: 0.0
@@ -227,25 +231,17 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
-                                    Text(
-                                        text = if (isZh) "📊 本期摘要" else "📊 Summary",
-                                        fontWeight = FontWeight.Bold,
-                                        style = MaterialTheme.typography.titleSmall
-                                    )
+                                    Text(text = if (isZh) "📊 本期摘要" else "📊 Summary", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
                                     Spacer(modifier = Modifier.height(4.dp))
-                                    // 顯示每度電費
-                                    Text("${if (isZh) "每度電費用" else "Price per kWh"}: $${String.format("%.2f", unitPrice)} ${if (isZh) "元" else ""}")
+                                    Text("${if (isZh) "每度電費用" else "Price per kWh"}: $${String.format("%.2f", unitPrice)}")
                                     Text("----------")
-                                    // 顯示公電度數
-                                    Text("${if (isZh) "公電總度數" else "Public Units"}: ${String.format("%.2f", vm.publicUnitsResult)} ${if (isZh) "度" else "kWh"}")
-                                    // 顯示公電費用
-                                    Text("${if (isZh) "每人公電費" else "Public Cost/Person"}: $${String.format("%.2f", vm.publicCostPerPersonResult)} ${if (isZh) "元" else ""}")
+                                    Text("${if (isZh) "公電總度數" else "Public Units"}: ${String.format("%.2f", vm.publicUnitsResult)} 度")
+                                    Text("${if (isZh) "每人公電費" else "Public Cost/Person"}: $${String.format("%.2f", vm.publicCostPerPersonResult)} 元")
                                 }
                             }
                         }
                     }
 
-                    // 住戶清單
                     itemsIndexed(vm.residents) { index, resident ->
                         Card(modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(2.dp)) {
                             Column(modifier = Modifier.padding(12.dp)) {
@@ -256,7 +252,7 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                                         label = { Text(if (isZh) "名稱" else "Name") },
                                         modifier = Modifier.weight(1f)
                                     )
-                                    IconButton(onClick = { vm.removeResident(index) }) {
+                                    IconButton(onClick = { if (!vm.isNavigating) vm.removeResident(index) }) {
                                         Icon(Icons.Default.Clear, contentDescription = "Remove")
                                     }
                                 }
@@ -279,28 +275,27 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
 
                                 if (resident.resultAmount > 0) {
                                     Column(modifier = Modifier.padding(top = 8.dp)) {
-                                        Text(
-                                            "${if (isZh) "📈 個人用電" else "Usage"}: ${String.format("%.1f", resident.usage)} ${if (isZh) "度" else "kWh"}",
-                                            color = MaterialTheme.colorScheme.secondary,
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-                                        Text(
-                                            "${if (isZh) "💰 本期總額" else "Total Cost"}: ${resident.resultAmount.toInt()} ${if (isZh) "元" else "NTD"}",
-                                            color = MaterialTheme.colorScheme.primary,
-                                            fontWeight = FontWeight.ExtraBold,
-                                            style = MaterialTheme.typography.titleMedium
-                                        )
+                                        Text("${if (isZh) "📈 個人用電" else "Usage"}: ${String.format("%.1f", resident.usage)} 度", color = MaterialTheme.colorScheme.secondary, style = MaterialTheme.typography.bodyMedium)
+                                        Text("${if (isZh) "💰 本期總額" else "Total Cost"}: ${resident.resultAmount.toInt()} 元", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.ExtraBold, style = MaterialTheme.typography.titleMedium)
                                     }
                                 }
                             }
                         }
                     }
 
-                    // 詳細過程按鈕
                     if (vm.isCalculated) {
                         item {
                             Button(
-                                onClick = { navController.navigate("detail") },
+                                onClick = {
+                                    // 🚀 使用導覽鎖保護主頁按鈕跳轉
+                                    vm.performNavigation {
+                                        navController.navigate("detail") {
+                                            popUpTo("main") { saveState = true }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    }
+                                },
                                 modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
                             ) {
