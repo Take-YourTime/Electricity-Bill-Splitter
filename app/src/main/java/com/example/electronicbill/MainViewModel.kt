@@ -11,6 +11,7 @@ class MainViewModel : ViewModel() {
     var totalAmount by mutableStateOf("") // total money to pay
     var totalUnits by mutableStateOf("")  // total kWh used
 
+    var publicUnitsResult by mutableDoubleStateOf(0.0) // public electricity units (totalUnits - sum of individual usage)
     var publicCostPerPersonResult by mutableDoubleStateOf(0.0) // public electricity cost per person (publicUnits * unitPrice / resident count)
 
     // 住戶清單
@@ -47,6 +48,16 @@ class MainViewModel : ViewModel() {
     // 3. calculate public electricity units by "totalUnits - sum of individual usage",
     // and calculate public electricity cost per person by "publicUnits * price per unit / resident count"
 
+    private fun updatePublicElectricityResults(billDegree: Double, pricePerUnit: Double) {
+        val publicUnits = billDegree.coerceAtLeast(0.0)
+        publicUnitsResult = publicUnits
+        publicCostPerPersonResult = if (residents.isNotEmpty()) {
+            (publicUnits * pricePerUnit) / residents.size
+        } else {
+            0.0
+        }
+    }
+
     var errorMessage by mutableStateOf("")
 
     // 4. get the final amount each resident should pay by "individual cost + public cost per person"
@@ -79,7 +90,7 @@ class MainViewModel : ViewModel() {
         }
 
         // Split public electricity cost equally among all residents.
-        publicCostPerPersonResult = (billDegree * pricePerUnit) / residents.size
+        updatePublicElectricityResults(billDegree, pricePerUnit)
 
         // Update the final electricity bill amount of each resident
         residents.forEachIndexed { index, r ->
@@ -135,6 +146,12 @@ class MainViewModel : ViewModel() {
         residents.clear()
         // Restore resident list (name/readings/results) from stored JSON.
         residents.addAll(saved)
+
+        val totalBill = totalAmount.toDoubleOrNull() ?: 0.0
+        val totalElectricityUnits = totalUnits.toDoubleOrNull() ?: 0.0
+        val sumIndividualUnits = residents.sumOf { it.usage }
+        val unitPrice = if (totalElectricityUnits > 0) totalBill / totalElectricityUnits else 0.0
+        updatePublicElectricityResults(totalElectricityUnits - sumIndividualUnits, unitPrice)
 
         // 載入紀錄時預設已計算過
         isCalculated = record.totalAmount > 0

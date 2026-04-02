@@ -279,6 +279,8 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                                     // 顯示每度電費
                                     Text("${if (isZh) "每度電費用" else "Price per kWh"}: $${String.format(Locale.getDefault(), "%.2f", unitPrice)} ${if (isZh) "元" else ""}")
                                     Text("----------")
+                                    Text("${if (isZh) "公電度數" else "Public Units"}: ${String.format(Locale.getDefault(), "%.2f", vm.publicUnitsResult)} ${if (isZh) "度" else "kWh"}")
+                                    Text("${if (isZh) "每人公電費用" else "Public Cost/Person"}: $${String.format(Locale.getDefault(), "%.2f", vm.publicCostPerPersonResult)} ${if (isZh) "元" else ""}")
                                 }
                             }
                         }
