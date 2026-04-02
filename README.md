@@ -8,6 +8,8 @@
 
 A specialized Android utility designed for multi-tenant or shared housing. It fairly distributes individual and public electricity costs based on official bill info and individual meter readings.
 
+Latest Version: 1.2.1
+
 ---
 
 ## ✨ 功能特點 | Features
