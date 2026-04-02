@@ -1,21 +1,23 @@
 package com.example.electronicbill
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Database
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.RoomDatabase
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BillDao {
     @Query("SELECT * FROM bill_history ORDER BY id DESC LIMIT 1")
-    suspend fun getLatestRecord(): BillRecord? // 用於開啟 App 時還原狀態
+    suspend fun getLatestRecord(): BillRecord?
 
     @Query("SELECT * FROM bill_history ORDER BY date DESC")
-    fun getAllRecordsFlow(): kotlinx.coroutines.flow.Flow<List<BillRecord>> // 用於顯示歷史列表
+    fun getAllRecordsFlow(): Flow<List<BillRecord>>
 
     @Delete
-    suspend fun deleteRecord(record: BillRecord) // 用於刪除特定紀錄
-
-    @Query("SELECT * FROM bill_history ORDER BY date DESC")
-    fun getAllRecords(): Flow<List<BillRecord>>
+    suspend fun deleteRecord(record: BillRecord)
 
     @Insert
     suspend fun insert(record: BillRecord)

@@ -4,19 +4,61 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Analytics
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Help
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -65,10 +107,16 @@ private enum class AppPage {
     DETAIL
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+private fun formatMoney(value: Double): String =
+    String.format(Locale.getDefault(), "%.2f", value)
+
+private fun formatNumber(value: Double): String =
+    String.format(Locale.getDefault(), "%.2f", value)
+
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun AppRoot(vm: MainViewModel, db: AppDatabase) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val drawerState = androidx.compose.material3.rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val isZh = vm.currentLanguage == "zh"
     val sdf = remember { SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()) }
@@ -125,9 +173,7 @@ fun AppRoot(vm: MainViewModel, db: AppDatabase) {
                     .width(300.dp)
                     .fillMaxHeight()
             ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
                     item {
                         Text(
                             text = if (isZh) "功能選單" else "Menu",
@@ -185,7 +231,7 @@ fun AppRoot(vm: MainViewModel, db: AppDatabase) {
                     item {
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                         Text(
-                            text = if (isZh) "歷史紀錄快捷套用" else "History Quick Apply",
+                            text = if (isZh) "歷史紀錄" else "History Records",
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                             style = MaterialTheme.typography.labelLarge
                         )
@@ -209,7 +255,7 @@ fun AppRoot(vm: MainViewModel, db: AppDatabase) {
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
-                                            text = "${if (isZh) "總額" else "Total"}: ${record.totalAmount.toInt()}",
+                                            text = "${if (isZh) "總額" else "Total"}: ${formatMoney(record.totalAmount)}",
                                             style = MaterialTheme.typography.bodySmall
                                         )
                                     }
@@ -306,7 +352,7 @@ private fun DrawerMenuItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
     vm: MainViewModel,
@@ -325,7 +371,12 @@ fun HomeContent(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(if (isZh) "⚡ 電費分攤助手 ⚡" else "⚡ Elec. Bill Splitter ⚡")
+                    Text(if (isZh) "⚡ 電費分攤助手 ⚡" else "⚡ Elec. Bill Splitter ⚡",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
                 },
                 navigationIcon = {
                     IconButton(onClick = onOpenDrawer) {
@@ -354,39 +405,57 @@ fun HomeContent(
                 )
 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
+                    androidx.compose.material3.OutlinedTextField(
                         value = vm.totalAmount,
                         onValueChange = { vm.totalAmount = it },
                         label = { Text(if (isZh) "總金額" else "Total $") },
                         modifier = Modifier.weight(1f),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
                     )
 
-                    OutlinedTextField(
+                    androidx.compose.material3.OutlinedTextField(
                         value = vm.totalUnits,
                         onValueChange = { vm.totalUnits = it },
                         label = { Text(if (isZh) "總度數" else "Total kWh") },
                         modifier = Modifier.weight(1f),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
                     )
                 }
 
                 Button(
                     onClick = {
                         scope.launch {
-                            val success = vm.calculateAndSave(db)
-                            if (success) {
-                                snackbarHostState.showSnackbar(
-                                    if (isZh) "成功存檔" else "Saved successfully"
-                                )
+                            when (val result = vm.calculateAndSave(db)) {
+                                is CalculationResult.Success -> {
+                                    snackbarHostState.showSnackbar(message = result.message, duration = SnackbarDuration.Short)
+                                }
+                                is CalculationResult.Error -> {
+                                    snackbarHostState.showSnackbar(message = result.message, duration = SnackbarDuration.Short)
+                                }
                             }
                         }
                     },
+                    enabled = !vm.isSaving,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp)
                 ) {
-                    Text(if (isZh) "計算並存檔" else "Calculate & Save")
+                    if (vm.isSaving) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(18.dp)
+                                .padding(end = 8.dp),
+                            strokeWidth = 2.dp
+                        )
+                    }
+                    Text(
+                        when {
+                            vm.isSaving && isZh -> "存檔中..."
+                            vm.isSaving && !isZh -> "Saving..."
+                            isZh -> "計算並存檔"
+                            else -> "Calculate & Save"
+                        }
+                    )
                 }
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
@@ -412,17 +481,14 @@ fun HomeContent(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                "${if (isZh) "每度電費用" else "Price per kWh"}: " +
-                                        "$${String.format("%.2f", unitPrice)} ${if (isZh) "元" else ""}"
+                                "${if (isZh) "每度電費用" else "Price per kWh"}: ${formatMoney(unitPrice)} ${if (isZh) "元" else ""}"
                             )
                             Text("----------")
                             Text(
-                                "${if (isZh) "公電總度數" else "Public Units"}: " +
-                                        "${String.format("%.2f", vm.publicUnitsResult)} ${if (isZh) "度" else "kWh"}"
+                                "${if (isZh) "公電總度數" else "Public Units"}: ${formatNumber(vm.publicUnitsResult)} ${if (isZh) "度" else "kWh"}"
                             )
                             Text(
-                                "${if (isZh) "每人公電費" else "Public Cost/Person"}: " +
-                                        "$${String.format("%.2f", vm.publicCostPerPersonResult)} ${if (isZh) "元" else ""}"
+                                "${if (isZh) "每人公電費" else "Public Cost/Person"}: ${formatMoney(vm.publicCostPerPersonResult)} ${if (isZh) "元" else ""}"
                             )
                         }
                     }
@@ -436,7 +502,7 @@ fun HomeContent(
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            OutlinedTextField(
+                            androidx.compose.material3.OutlinedTextField(
                                 value = resident.name,
                                 onValueChange = {
                                     vm.residents[index] = resident.copy(name = it)
@@ -454,38 +520,36 @@ fun HomeContent(
                             modifier = Modifier.padding(top = 8.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            OutlinedTextField(
+                            androidx.compose.material3.OutlinedTextField(
                                 value = resident.prevReading,
                                 onValueChange = {
                                     vm.residents[index] = resident.copy(prevReading = it)
                                 },
                                 label = { Text(if (isZh) "前期" else "Prev") },
                                 modifier = Modifier.weight(1f),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
                             )
 
-                            OutlinedTextField(
+                            androidx.compose.material3.OutlinedTextField(
                                 value = resident.currReading,
                                 onValueChange = {
                                     vm.residents[index] = resident.copy(currReading = it)
                                 },
                                 label = { Text(if (isZh) "當期" else "Curr") },
                                 modifier = Modifier.weight(1f),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
                             )
                         }
 
                         if (resident.resultAmount > 0) {
                             Column(modifier = Modifier.padding(top = 8.dp)) {
                                 Text(
-                                    "${if (isZh) "📈 個人用電" else "Usage"}: " +
-                                            "${String.format("%.1f", resident.usage)} ${if (isZh) "度" else "kWh"}",
+                                    "${if (isZh) "📈 個人用電" else "Usage"}: ${formatNumber(resident.usage)} ${if (isZh) "度" else "kWh"}",
                                     color = MaterialTheme.colorScheme.secondary,
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 Text(
-                                    "${if (isZh) "💰 本期總額" else "Total Cost"}: " +
-                                            "${resident.resultAmount.toInt()} ${if (isZh) "元" else "NTD"}",
+                                    "${if (isZh) "💰 本期總額" else "Total Cost"}: ${formatMoney(resident.resultAmount)} ${if (isZh) "元" else "NTD"}",
                                     color = MaterialTheme.colorScheme.primary,
                                     fontWeight = FontWeight.ExtraBold,
                                     style = MaterialTheme.typography.titleMedium

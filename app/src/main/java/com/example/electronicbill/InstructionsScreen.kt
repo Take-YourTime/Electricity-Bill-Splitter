@@ -18,7 +18,7 @@ fun InstructionsScreen(vm: MainViewModel, onBack: () -> Unit) {
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
+            TopAppBar(
                 title = { Text(if (isZh) "使用說明" else "User Guide") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
