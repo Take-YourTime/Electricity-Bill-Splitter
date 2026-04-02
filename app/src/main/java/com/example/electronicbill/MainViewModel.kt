@@ -1,6 +1,10 @@
 package com.example.electronicbill
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
@@ -8,27 +12,20 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class MainViewModel : ViewModel() {
-    /* --- 介面狀態 (State) --- */
-    var totalAmount by mutableStateOf("") // 帳單總金額
-    var totalUnits by mutableStateOf("")  // 帳單總度數
+    var totalAmount by mutableStateOf("")
+    var totalUnits by mutableStateOf("")
 
-    // 公電計算結果
-    var publicUnitsResult by mutableStateOf(0.0)
-    var publicCostPerPersonResult by mutableStateOf(0.0)
+    var publicUnitsResult by mutableDoubleStateOf(0.0)
+    var publicCostPerPersonResult by mutableDoubleStateOf(0.0)
 
-    // 住戶清單
     val residents = mutableStateListOf<Resident>()
 
-    // 歷史紀錄列表
     var historyList by mutableStateOf<List<BillRecord>>(emptyList())
 
-    // 新增：是否已經計算過？（控制顯示詳細過程按鈕）
     var isCalculated by mutableStateOf(false)
 
-    // 語言設定
-    var currentLanguage by mutableStateOf("zh") // "zh" 或 "en"
+    var currentLanguage by mutableStateOf("zh")
 
-    /* --- 住戶管理功能 --- */
     fun addResident() {
         residents.add(Resident("住戶 ${'A' + residents.size}"))
     }
@@ -37,42 +34,38 @@ class MainViewModel : ViewModel() {
         if (residents.size > 1) residents.removeAt(index)
     }
 
-    /* --- 核心計算邏輯 (C++ 邏輯) --- */
     fun calculate(db: AppDatabase) {
         val billPrice = totalAmount.toDoubleOrNull() ?: 0.0
         val billDegree = totalUnits.toDoubleOrNull() ?: 0.0
-        if (billDegree <= 0) return
+
+        if (billDegree <= 0 || residents.isEmpty()) return
 
         val pricePerUnit = billPrice / billDegree
         var sumIndividualUnits = 0.0
 
-        // 計算每位住戶的用電量
         residents.forEachIndexed { index, r ->
-            val now = r.currReading.toDoubleOrNull() ?: 0.0
-            val pre = r.prevReading.toDoubleOrNull() ?: 0.0
-            val used = now - pre
-            residents[index] = r.copy(usage = used)
+            val used = (r.currReading.toDoubleOrNull() ?: 0.0) -
+                    (r.prevReading.toDoubleOrNull() ?: 0.0)
+
             sumIndividualUnits += used
+            residents[index] = r.copy(usage = used)
         }
 
-        // 公電計算
         publicUnitsResult = billDegree - sumIndividualUnits
-        publicCostPerPersonResult = (publicUnitsResult * pricePerUnit) / residents.size
+        publicCostPerPersonResult =
+            (publicUnitsResult * pricePerUnit) / residents.size
 
-        // 更新最終應付金額 (含公電)
         residents.forEachIndexed { index, r ->
             val finalPrice = (r.usage * pricePerUnit) + publicCostPerPersonResult
-            residents[index] = residents[index].copy(resultAmount = finalPrice.roundToInt().toDouble())
+            residents[index] = residents[index].copy(
+                resultAmount = finalPrice.roundToInt().toDouble()
+            )
         }
 
-        // --- 重點：更新計算狀態 ---
         isCalculated = true
-
-        // 計算完畢後自動儲存到資料庫
         saveToDatabase(db)
     }
 
-    /* --- 資料庫操作 (Room) --- */
     private fun saveToDatabase(db: AppDatabase) {
         viewModelScope.launch {
             val record = BillRecord(
@@ -89,6 +82,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             db.billDao().getAllRecordsFlow().collect { list ->
                 historyList = list
+
                 if (residents.isEmpty() && list.isNotEmpty()) {
                     applyRecord(list.first())
                 } else if (residents.isEmpty()) {
@@ -108,15 +102,32 @@ class MainViewModel : ViewModel() {
         residents.clear()
         residents.addAll(saved)
 
-        // 載入紀錄時預設已計算過
+        recomputeSummary()
         isCalculated = record.totalAmount > 0
     }
 
-    fun deleteRecord(db: AppDatabase, record: BillRecord) {
-        viewModelScope.launch { db.billDao().deleteRecord(record) }
+    private fun recomputeSummary() {
+        val totalBill = totalAmount.toDoubleOrNull() ?: 0.0
+        val totalDegree = totalUnits.toDoubleOrNull() ?: 0.0
+        val unitPrice = if (totalDegree > 0) totalBill / totalDegree else 0.0
+
+        val sumIndividualUnits = residents.sumOf { it.usage }
+        publicUnitsResult = totalDegree - sumIndividualUnits
+
+        publicCostPerPersonResult =
+            if (residents.isNotEmpty()) {
+                (publicUnitsResult * unitPrice) / residents.size
+            } else {
+                0.0
+            }
     }
 
-    // 分析數據聚合邏輯
+    fun deleteRecord(db: AppDatabase, record: BillRecord) {
+        viewModelScope.launch {
+            db.billDao().deleteRecord(record)
+        }
+    }
+
     fun getAggregatedData(): Pair<Map<String, Double>, Map<String, Double>> {
         val unitMap = mutableMapOf<String, Double>()
         val costMap = mutableMapOf<String, Double>()
@@ -126,7 +137,6 @@ class MainViewModel : ViewModel() {
         historyList.forEach { record ->
             val savedResidents: List<Resident> = gson.fromJson(record.residentsJson, listType)
             savedResidents.forEach { r ->
-                // 根據名稱累加度數與金額
                 unitMap[r.name] = (unitMap[r.name] ?: 0.0) + r.usage
                 costMap[r.name] = (costMap[r.name] ?: 0.0) + r.resultAmount
             }

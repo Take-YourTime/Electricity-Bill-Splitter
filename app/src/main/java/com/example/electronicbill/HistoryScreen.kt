@@ -13,11 +13,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryScreen(vm: MainViewModel, db: AppDatabase, onBack: () -> Unit) {
+fun HistoryScreen(
+    vm: MainViewModel,
+    db: AppDatabase,
+    onBackToDrawer: () -> Unit,
+    onApplyRecord: (BillRecord) -> Unit
+) {
     val isZh = vm.currentLanguage == "zh"
     val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault())
 
@@ -26,7 +32,7 @@ fun HistoryScreen(vm: MainViewModel, db: AppDatabase, onBack: () -> Unit) {
             TopAppBar(
                 title = { Text(if (isZh) "歷史計算紀錄" else "Calculation History") },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = onBackToDrawer) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
@@ -34,22 +40,28 @@ fun HistoryScreen(vm: MainViewModel, db: AppDatabase, onBack: () -> Unit) {
         }
     ) { padding ->
         if (vm.historyList.isEmpty()) {
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = androidx.compose.ui.Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = androidx.compose.ui.Alignment.Center
+            ) {
                 Text(if (isZh) "尚無歷史紀錄" else "No history found")
             }
         } else {
             LazyColumn(
-                modifier = Modifier.padding(padding).fillMaxSize(),
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(vm.historyList) { record ->
+                items(vm.historyList, key = { it.id }) { record ->
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         elevation = CardDefaults.cardElevation(2.dp),
                         onClick = {
-                            vm.applyRecord(record) // 代入數據
-                            onBack() // 返回主頁面
+                            onApplyRecord(record)
                         }
                     ) {
                         Row(
@@ -69,8 +81,13 @@ fun HistoryScreen(vm: MainViewModel, db: AppDatabase, onBack: () -> Unit) {
                                     color = MaterialTheme.colorScheme.secondary
                                 )
                             }
+
                             IconButton(onClick = { vm.deleteRecord(db, record) }) {
-                                Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red)
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = "Delete",
+                                    tint = Color.Red
+                                )
                             }
                         }
                     }
