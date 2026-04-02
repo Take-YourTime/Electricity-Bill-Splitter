@@ -200,7 +200,7 @@ fun AppRoot(vm: MainViewModel, db: AppDatabase) {
                             )
                         }
                     } else {
-                        items(vm.historyList, key = { it.id }) { record ->
+                        items(vm.historyList.take(5), key = { it.id }) { record ->
                             NavigationDrawerItem(
                                 label = {
                                     Column {
@@ -315,8 +315,13 @@ fun HomeContent(
     onOpenDetail: () -> Unit
 ) {
     val isZh = vm.currentLanguage == "zh"
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -367,7 +372,16 @@ fun HomeContent(
                 }
 
                 Button(
-                    onClick = { vm.calculate(db) },
+                    onClick = {
+                        scope.launch {
+                            val success = vm.calculateAndSave(db)
+                            if (success) {
+                                snackbarHostState.showSnackbar(
+                                    if (isZh) "成功存檔" else "Saved successfully"
+                                )
+                            }
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp)

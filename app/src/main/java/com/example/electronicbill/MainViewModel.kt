@@ -34,11 +34,11 @@ class MainViewModel : ViewModel() {
         if (residents.size > 1) residents.removeAt(index)
     }
 
-    fun calculate(db: AppDatabase) {
+    suspend fun calculateAndSave(db: AppDatabase): Boolean {
         val billPrice = totalAmount.toDoubleOrNull() ?: 0.0
         val billDegree = totalUnits.toDoubleOrNull() ?: 0.0
 
-        if (billDegree <= 0 || residents.isEmpty()) return
+        if (billDegree <= 0 || residents.isEmpty()) return false
 
         val pricePerUnit = billPrice / billDegree
         var sumIndividualUnits = 0.0
@@ -64,18 +64,17 @@ class MainViewModel : ViewModel() {
 
         isCalculated = true
         saveToDatabase(db)
+        return true
     }
 
-    private fun saveToDatabase(db: AppDatabase) {
-        viewModelScope.launch {
-            val record = BillRecord(
-                date = System.currentTimeMillis(),
-                totalAmount = totalAmount.toDoubleOrNull() ?: 0.0,
-                totalUnits = totalUnits.toDoubleOrNull() ?: 0.0,
-                residentsJson = Gson().toJson(residents.toList())
-            )
-            db.billDao().insert(record)
-        }
+    private suspend fun saveToDatabase(db: AppDatabase) {
+        val record = BillRecord(
+            date = System.currentTimeMillis(),
+            totalAmount = totalAmount.toDoubleOrNull() ?: 0.0,
+            totalUnits = totalUnits.toDoubleOrNull() ?: 0.0,
+            residentsJson = Gson().toJson(residents.toList())
+        )
+        db.billDao().insert(record)
     }
 
     fun initData(db: AppDatabase) {
