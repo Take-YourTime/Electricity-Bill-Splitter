@@ -13,3 +13,15 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+
+
+# 排除金鑰檔案
+*.jks
+*.keystore
+
+# 排除打包產出的中繼資料
+output-metadata.json
+
+# 排除混淆對照表
+app/build/outputs/mapping/
