@@ -25,3 +25,6 @@ output-metadata.json
 
 # 排除混淆對照表
 app/build/outputs/mapping/
+
+# release file
+app/release
