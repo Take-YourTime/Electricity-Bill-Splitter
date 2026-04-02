@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguageScreen(vm: MainViewModel, onBack: () -> Unit) {
+    // Read once per recomposition: true when UI should display Chinese labels.
     val isZh = vm.currentLanguage == "zh"
 
     Scaffold(
@@ -30,6 +31,7 @@ fun LanguageScreen(vm: MainViewModel, onBack: () -> Unit) {
         }
     ) { padding ->
         // 使用 Column 並設定 selectableGroup 以利無障礙與邏輯組織
+        // The group ensures radio-like behavior is announced correctly to accessibility services.
         Column(
             modifier = Modifier
                 .padding(padding)
@@ -47,6 +49,7 @@ fun LanguageScreen(vm: MainViewModel, onBack: () -> Unit) {
             LanguageOptionRow(
                 label = "繁體中文 (Traditional Chinese)",
                 selected = vm.currentLanguage == "zh",
+                // Mutating view-model state triggers immediate UI language switch.
                 onClick = { vm.currentLanguage = "zh" }
             )
 

@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InstructionsScreen(vm: MainViewModel, onBack: () -> Unit) {
+    // Toggle all labels between Chinese and English with one shared flag.
     val isZh = vm.currentLanguage == "zh"
 
     Scaffold(
@@ -28,6 +29,7 @@ fun InstructionsScreen(vm: MainViewModel, onBack: () -> Unit) {
             )
         }
     ) { padding ->
+        // A scrollable list is used so this help page works on small screens too.
         LazyColumn(
             modifier = Modifier.padding(padding).fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
@@ -81,6 +83,7 @@ fun InstructionsScreen(vm: MainViewModel, onBack: () -> Unit) {
 
             // 計算公式說明 (根據您的 C++ 邏輯撰寫)
             item {
+                // Highlight the formula block so users can verify how charges are split.
                 Card(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                 ) {
@@ -122,6 +125,7 @@ fun InstructionsScreen(vm: MainViewModel, onBack: () -> Unit) {
 
 @Composable
 fun InstructionStep(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String, description: String) {
+    // Reusable row for each guide step: icon + title + short explanation.
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
         verticalAlignment = Alignment.Top

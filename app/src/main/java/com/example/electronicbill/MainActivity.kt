@@ -9,10 +9,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.filled.Analytics
-import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.Help
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,6 +32,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Create a single Room database instance used by all screens.
         val db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "electric-db"
@@ -43,20 +43,24 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
 
             LaunchedEffect(Unit) {
+                // Load history once when app starts, then keep observing updates.
                 viewModel.initData(db)
             }
 
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    // NavHost 路由配置
+
+                    // NavHost
+                    // Centralized route table for all app screens.
                     NavHost(navController = navController, startDestination = "main") {
                         composable("main") { MainScreen(viewModel, db, navController) }
-                        composable("detail") { DetailScreen(viewModel, onBack = { navController.popBackStack() }) }
-                        composable("analysis") { AnalysisScreen(viewModel, onBack = { navController.popBackStack() }) }
-                        composable("language") { LanguageScreen(viewModel, onBack = { navController.popBackStack() }) }
-                        composable("settings") { SettingsScreen(viewModel, onBack = { navController.popBackStack() }) }
-                        composable("instructions") { InstructionsScreen(viewModel, onBack = { navController.popBackStack() }) }
-                        composable("history") { HistoryScreen(viewModel, db, onBack = { navController.popBackStack() }) }
+
+                        composable("detail") { DetailScreen(viewModel, onBack = { navController.navigateUp() }) }
+                        composable("analysis") { AnalysisScreen(viewModel, onBack = { navController.navigateUp() }) }
+                        composable("language") { LanguageScreen(viewModel, onBack = { navController.navigateUp() }) }
+                        composable("settings") { SettingsScreen(viewModel, onBack = { navController.navigateUp() }) }
+                        composable("instructions") { InstructionsScreen(viewModel, onBack = { navController.navigateUp() }) }
+                        composable("history") { HistoryScreen(viewModel, db, onBack = { navController.navigateUp() }) }
                     }
                 }
             }
@@ -67,6 +71,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navigation.NavController) {
+    // Drawer state controls open/close animation of the side menu.
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val sdf = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault())
@@ -91,8 +96,12 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                             selected = false,
                             icon = { Icon(Icons.Default.History, null) }, // 請確保匯入 Icons.Default.History
                             onClick = {
-                                navController.navigate("history")
-                                scope.launch { drawerState.close() }
+                                scope.launch {
+                                    drawerState.close()
+                                    navController.navigate("history") {
+                                        launchSingleTop = true
+                                    }
+                                }
                             }
                         )
 
@@ -101,8 +110,12 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                             selected = false,
                             icon = { Icon(Icons.Default.Analytics, null) },
                             onClick = {
-                                navController.navigate("analysis")
-                                scope.launch { drawerState.close() }
+                                scope.launch {
+                                    drawerState.close()
+                                    navController.navigate("analysis") {
+                                        launchSingleTop = true
+                                    }
+                                }
                             }
                         )
                         NavigationDrawerItem(
@@ -110,17 +123,25 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                             selected = false,
                             icon = { Icon(Icons.Default.Language, null) },
                             onClick = {
-                                navController.navigate("language")
-                                scope.launch { drawerState.close() }
+                                scope.launch {
+                                    drawerState.close()
+                                    navController.navigate("language") {
+                                        launchSingleTop = true
+                                    }
+                                }
                             }
                         )
                         NavigationDrawerItem(
                             label = { Text(if (isZh) "使用說明" else "Instructions") },
                             selected = false,
-                            icon = { Icon(Icons.Default.Help, null) },
+                            icon = { Icon(Icons.AutoMirrored.Filled.Help, null) },
                             onClick = {
-                                navController.navigate("instructions")
-                                scope.launch { drawerState.close() }
+                                scope.launch {
+                                    drawerState.close()
+                                    navController.navigate("instructions") {
+                                        launchSingleTop = true
+                                    }
+                                }
                             }
                         )
                         NavigationDrawerItem(
@@ -128,8 +149,12 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                             selected = false,
                             icon = { Icon(Icons.Default.Settings, null) },
                             onClick = {
-                                navController.navigate("settings")
-                                scope.launch { drawerState.close() }
+                                scope.launch {
+                                    drawerState.close()
+                                    navController.navigate("settings") {
+                                        launchSingleTop = true
+                                    }
+                                }
                             }
                         )
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
@@ -150,10 +175,12 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                             },
                             selected = false,
                             onClick = {
+                                // Reuse a previous bill result by restoring saved input/output values.
                                 vm.applyRecord(record)
                                 scope.launch { drawerState.close() }
                             },
                             badge = {
+                                // Delete only this specific history record.
                                 IconButton(onClick = { vm.deleteRecord(db, record) }) {
                                     Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red)
                                 }
@@ -166,6 +193,15 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
         },
         content = {
             // --- 2. 主畫面內容 (剛才你漏掉的部分) ---
+            val snackbarHostState = remember { SnackbarHostState() }
+            
+            // Show snackbar when error message changes
+            LaunchedEffect(vm.errorMessage) {
+                if (vm.errorMessage.isNotEmpty()) {
+                    snackbarHostState.showSnackbar(vm.errorMessage)
+                }
+            }
+            
             Scaffold(
                 topBar = {
                     CenterAlignedTopAppBar(
@@ -181,7 +217,8 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                     FloatingActionButton(onClick = { vm.addResident() }) {
                         Icon(Icons.Default.Add, contentDescription = "Add")
                     }
-                }
+                },
+                snackbarHost = { SnackbarHost(snackbarHostState) }
             ) { padding ->
                 LazyColumn(
                     modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
@@ -189,6 +226,7 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                 ) {
                     // 帳單總資訊
                     item {
+                        // User enters bill totals from utility statement.
                         Text(if (isZh) "帳單資訊" else "Bill Info", style = MaterialTheme.typography.titleMedium)
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             OutlinedTextField(
@@ -207,7 +245,11 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                             )
                         }
                         Button(
-                            onClick = { vm.calculate(db) },
+                            onClick = {
+                                scope.launch {
+                                    vm.calculate(db)
+                                }
+                            },
                             modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
                         ) {
                             Text(if (isZh) "計算並存檔" else "Calculate & Save")
@@ -218,6 +260,7 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                     /* --- 區塊：帳單摘要資訊 --- */
                     if (vm.isCalculated) {
                         item {
+                            // Quick summary block after calculation succeeds.
                             val totalBill = vm.totalAmount.toDoubleOrNull() ?: 0.0
                             val totalUnits = vm.totalUnits.toDoubleOrNull() ?: 0.0
                             val unitPrice = if (totalUnits > 0) totalBill / totalUnits else 0.0
@@ -234,12 +277,8 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     // 顯示每度電費
-                                    Text("${if (isZh) "每度電費用" else "Price per kWh"}: $${String.format("%.2f", unitPrice)} ${if (isZh) "元" else ""}")
+                                    Text("${if (isZh) "每度電費用" else "Price per kWh"}: $${String.format(Locale.getDefault(), "%.2f", unitPrice)} ${if (isZh) "元" else ""}")
                                     Text("----------")
-                                    // 顯示公電度數
-                                    Text("${if (isZh) "公電總度數" else "Public Units"}: ${String.format("%.2f", vm.publicUnitsResult)} ${if (isZh) "度" else "kWh"}")
-                                    // 顯示公電費用
-                                    Text("${if (isZh) "每人公電費" else "Public Cost/Person"}: $${String.format("%.2f", vm.publicCostPerPersonResult)} ${if (isZh) "元" else ""}")
                                 }
                             }
                         }
@@ -278,9 +317,10 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                                 }
 
                                 if (resident.resultAmount > 0) {
+                                    // Show each resident's computed usage and payable amount.
                                     Column(modifier = Modifier.padding(top = 8.dp)) {
                                         Text(
-                                            "${if (isZh) "📈 個人用電" else "Usage"}: ${String.format("%.1f", resident.usage)} ${if (isZh) "度" else "kWh"}",
+                                            "${if (isZh) "📈 個人用電" else "Usage"}: ${String.format(Locale.getDefault(), "%.1f", resident.usage)} ${if (isZh) "度" else "kWh"}",
                                             color = MaterialTheme.colorScheme.secondary,
                                             style = MaterialTheme.typography.bodyMedium
                                         )
@@ -299,6 +339,7 @@ fun MainScreen(vm: MainViewModel, db: AppDatabase, navController: androidx.navig
                     // 詳細過程按鈕
                     if (vm.isCalculated) {
                         item {
+                            // Opens a step-by-step explanation screen for formula transparency.
                             Button(
                                 onClick = { navController.navigate("detail") },
                                 modifier = Modifier.fillMaxWidth().padding(top = 24.dp),

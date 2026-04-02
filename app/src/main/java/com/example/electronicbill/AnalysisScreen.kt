@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AnalysisScreen(vm: MainViewModel, onBack: () -> Unit) {
     // 取得統計數據
+    // Aggregates all saved records into per-resident usage/cost totals.
     val (unitData, costData) = vm.getAggregatedData()
     val isZh = vm.currentLanguage == "zh"
 
@@ -35,6 +36,7 @@ fun AnalysisScreen(vm: MainViewModel, onBack: () -> Unit) {
         }
     ) { padding ->
         if (unitData.isEmpty()) {
+            // Empty-state view when there is no history yet.
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(if (isZh) "暫無歷史數據" else "No Data Available")
             }
@@ -65,6 +67,7 @@ fun AnalysisScreen(vm: MainViewModel, onBack: () -> Unit) {
 
 @Composable
 fun PieChartWithLegend(data: Map<String, Double>, unit: String) {
+    // Fixed palette with cycling fallback when there are many residents.
     val colors = listOf(Color(0xFF6200EE), Color(0xFF03DAC5), Color(0xFFFF0266), Color(0xFFF44336), Color(0xFF4CAF50), Color(0xFFFFC107))
     val total = data.values.sum()
 
@@ -74,6 +77,7 @@ fun PieChartWithLegend(data: Map<String, Double>, unit: String) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 var startAngle = 0f
                 data.values.forEachIndexed { index, value ->
+                    // Convert each value into a slice angle based on total sum.
                     val sweepAngle = (value.toFloat() / total.toFloat()) * 360f
                     drawArc(
                         color = colors[index % colors.size],
@@ -91,6 +95,7 @@ fun PieChartWithLegend(data: Map<String, Double>, unit: String) {
         // 顯示圖例
         data.keys.forEachIndexed { index, name ->
             val value = data[name] ?: 0.0
+            // Show readable percentage next to absolute value.
             val percentage = (value / total * 100).toInt()
             Row(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),

@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(vm: MainViewModel, onBack: () -> Unit) {
+    // Placeholder screen for future app-level preferences.
     Scaffold(
         topBar = {
             TopAppBar(
@@ -24,6 +25,7 @@ fun SettingsScreen(vm: MainViewModel, onBack: () -> Unit) {
             )
         }
     ) { padding ->
+        // Keep content centered so users can clearly see this module is not finished yet.
         Box(modifier = Modifier.padding(padding).fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(if (vm.currentLanguage == "zh") "設定功能開發中..." else "Settings under development...")
         }
