@@ -4,9 +4,9 @@
 ![Kotlin](https://img.shields.io/badge/Language-Kotlin-blue.svg) 
 ![Compose](https://img.shields.io/badge/UI-Jetpack%20Compose-orange.svg)
 
-這是一款專為多房分租或居家環境設計的 Android 應用程式。它能根據台電帳單資訊與各別住戶電表讀數，公平地分攤個人電費與公電費用。
+這是一款專為分租套房或分租雅房等家庭式租屋族群設計的 Android 應用程式。它能根據**台電帳單資訊**與**住戶電表讀數**，公平地分攤每人所需支付的電費。
 
-A specialized Android utility designed for multi-tenant or shared housing. It fairly distributes individual and public electricity costs based on official bill info and individual meter readings.
+This is an Android application designed specifically for family-style rental groups, such as those renting out suites or shared rooms. It fairly distributes the electricity costs per person based on **Taipower bill information** and **resident's meter reading**.
 
 Latest Version: 1.2.1
 
@@ -14,7 +14,7 @@ Latest Version: 1.2.1
 
 ## ✨ 功能特點 | Features
 
-- **公平公電分攤 (Fair Allocation)**: 自動試算公電度數，並精確平均分配給所有住戶。
+- **自動計算公電 (Fair Allocation)**: 可自動試算公電度數，並精確平均分配給所有住戶。
 - **歷史紀錄管理 (History Management)**: 獨立頁面管理，支援隨時查看、刪除或重新代入舊數據。
 - **用電分析圖表 (Data Analytics)**: 以圓餅圖視覺化呈現各住戶的總用電度數與電費比例。
 - **詳細試算過程 (Detailed Breakdown)**: 展示三步驟試算邏輯，小數點後兩位四捨五入，清清楚楚。
@@ -29,11 +29,11 @@ Latest Version: 1.2.1
    
 2. **管理住戶名單 (Manage Residents)** 點擊右下角的「+」按鈕新增住戶，可點擊名稱欄位來自訂稱呼。
 
-3. **填寫電表讀數 (Enter Meter Readings)** 輸入每位住戶電表的「前期」與「當期」讀數，系統會自動算出個人用電度數。
+3. **填寫電表讀數 (Enter Meter Readings)** 輸入每位住戶電表的「前期」與「當期」讀數，系統會自動算出此用戶本期用電度數。
 
-4. **計算與存檔 (Calculate & Save)** 點擊「計算並存檔」後，系統會分配公電費並儲存紀錄至歷史清單。
+4. **計算與存檔 (Calculate & Save)** 點擊「計算並存檔」後，系統會分配公電費並將計算結果儲存至歷史清單中。
 
-5. **查看詳細過程 (Detailed Breakdown)** 計算完成後，點擊下方的「查看詳細計算過程」按鈕，獲取完整試算表。
+5. **查看詳細過程 (Detailed Breakdown)** 計算完成後，點擊下方的「查看詳細計算過程」按鈕，可以知曉每人電費的計算過程。
 
 ---
 
