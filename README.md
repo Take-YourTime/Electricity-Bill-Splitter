@@ -68,7 +68,6 @@ Latest Version: 1.2.1
 
 ## 📸 介面預覽 | UI Preview
 
-*(您可以自行在此處加入您的 App 截圖連結)*
 - 主頁面: `[Main Page Screenshot]`
 - 歷史紀錄: `[History Page Screenshot]`
 - 數據分析: `[Analysis Page Screenshot]`
