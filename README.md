@@ -4,7 +4,7 @@
 ![Kotlin](https://img.shields.io/badge/Language-Kotlin-blue.svg) 
 ![Compose](https://img.shields.io/badge/UI-Jetpack%20Compose-orange.svg)
 
-這是一款專為分租套房或分租雅房等家庭式租屋族群設計的 Android 應用程式。它能根據**台電帳單資訊**與**住戶電表讀數**，公平地分攤每人所需支付的電費。
+這是一款專為分租套房或分租雅房等家庭式租屋族群設計的 Android 應用程式。它能根據**台電帳單資訊**與**住戶個人電表讀數**，公平地分攤每人所需支付的電費。
 
 This is an Android application designed specifically for family-style rental groups, such as those renting out suites or shared rooms. It fairly distributes the electricity costs per person based on **Taipower bill information** and **resident's meter reading**.
 
