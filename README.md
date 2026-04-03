@@ -8,7 +8,16 @@
 
 This is an Android application designed specifically for family-style rental groups, such as those renting out suites or shared rooms. It fairly distributes the electricity costs per person based on **Taipower bill information** and **resident's meter reading**.
 
-Latest Version: 1.2.1
+---
+
+## ⬇️ 下載方式 | How to download?
+
+點選頁面右側的release，即可下載最新版本App的apk檔案，而後在手機中檔案目錄中找到該apk檔案，選擇「安裝此應用程式」。
+
+Click "release" on the right side of the page to download the latest version of the app's APK file.   
+Then, locate the APK file in your phone's file directory and select "Install this application".
+
+**-> Latest Version: 1.2.1 <-**
 
 ---
 
