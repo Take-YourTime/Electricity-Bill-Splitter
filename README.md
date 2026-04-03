@@ -15,10 +15,15 @@ Latest Version: 1.2.1
 ## ✨ 功能特點 | Features
 
 - **自動計算公電 (Fair Allocation)**: 可自動試算公電度數，並精確平均分配給所有住戶。
+  
 - **歷史紀錄管理 (History Management)**: 獨立頁面管理，支援隨時查看、刪除或重新代入舊數據。
+  
 - **用電分析圖表 (Data Analytics)**: 以圓餅圖視覺化呈現各住戶的總用電度數與電費比例。
+  
 - **詳細試算過程 (Detailed Breakdown)**: 展示三步驟試算邏輯，小數點後兩位四捨五入，清清楚楚。
+  
 - **多語系支援 (Multi-language)**: 支援繁體中文與英文介面即時切換。
+  
 - **本地持久儲存 (Room Database)**: 使用 Room 資料庫儲存住戶名單、前期度數，換頁或重開 App 都不遺失。
 
 ---
