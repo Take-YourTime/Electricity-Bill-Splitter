@@ -55,7 +55,7 @@ Latest Version: 1.2.1
 ## 🛠️ 開發技術 | Tech Stack
 
 | 項目 | 技術 / 函式庫 |
-| :--- | :--- |
+| ---- | ---- |
 | **程式語言** | Kotlin |
 | **介面框架** | Jetpack Compose (Material 3) |
 | **頁面導覽** | Jetpack Navigation |
@@ -68,9 +68,9 @@ Latest Version: 1.2.1
 
 ## 📸 介面預覽 | UI Preview
 
-- 主頁面: `[Main Page Screenshot]`
-- 歷史紀錄: `[History Page Screenshot]`
-- 數據分析: `[Analysis Page Screenshot]`
+| 主頁面 | 功能欄 | 歷史紀錄 | 數據分析 | 使用者指南 | 計算過程 |
+| ---- | ---- | ---- | ---- | ---- | ---- |
+| <img src="./preview/main%20page.jpg" width="100%"> | <img src="./preview/left%20side%20table.jpg" width="100%"> | <img src="./preview/history%20page.jpg" width="100%"> | <img src="./preview/analysis%20page.jpg" width="100%"> | <img src="./preview/guild%20line%20page.jpg" width="100%"> | <img src="./preview/calculation%20detail.jpg" width="100%"> |
 
 ---
 
