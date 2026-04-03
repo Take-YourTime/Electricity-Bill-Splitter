@@ -73,9 +73,13 @@ Latest Version: 1.2.1
 
 ## 📸 介面預覽 | UI Preview
 
-| 主頁面 | 功能欄 | 歷史紀錄 | 數據分析 | 使用者指南 | 計算過程 |
-| ---- | ---- | ---- | ---- | ---- | ---- |
-| <img src="./preview/main%20page.jpg" width="100%"> | <img src="./preview/left%20side%20table.jpg" width="100%"> | <img src="./preview/history%20page.jpg" width="100%"> | <img src="./preview/analysis%20page.jpg" width="100%"> | <img src="./preview/guild%20line%20page.jpg" width="100%"> | <img src="./preview/calculation%20detail.jpg" width="100%"> |
+| 主頁面 | 功能欄 | 歷史紀錄 | 
+| ---- | ---- | ---- | 
+| <img src="./preview/main%20page.jpg" width="100%"> | <img src="./preview/left%20side%20table.jpg" width="100%"> | <img src="./preview/history%20page.jpg" width="100%"> | 
+
+| 數據分析 | 使用者指南 | 計算過程 |  
+| ---- | ---- | ---- | 
+| <img src="./preview/analysis%20page.jpg" width="100%"> | <img src="./preview/guild%20line%20page.jpg" width="100%"> | <img src="./preview/calculation%20detail.jpg" width="100%"> | 
 
 ---
 
