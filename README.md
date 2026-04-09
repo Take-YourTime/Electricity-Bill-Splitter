@@ -96,3 +96,4 @@ Then, locate the APK file in your phone's file directory and select "Install thi
 
 - 所有金額計算均採四捨五入至整數，度數顯示至小數點後兩位。
 - 數據皆儲存於手機本地端，確保您的隱私。
+- Made with Gemini 3
