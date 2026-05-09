@@ -35,6 +35,8 @@ Then, locate the APK file in your phone's file directory and select "Install thi
   
 - **本地持久儲存 (Room Database)**: 使用 Room 資料庫儲存住戶名單、前期度數，換頁或重開 App 都不遺失。
 
+- **離線應用程式 (Off-line App)**: 不需網路也可運作！
+
 ---
 
 ## 📖 使用指南 | User Guide
