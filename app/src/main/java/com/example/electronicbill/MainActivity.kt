@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -72,6 +73,8 @@ import java.util.Date
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
+    private val viewModel by lazy { androidx.lifecycle.ViewModelProvider(this)[MainViewModel::class.java] }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -82,8 +85,6 @@ class MainActivity : ComponentActivity() {
         ).build()
 
         setContent {
-            val viewModel = remember { MainViewModel() }
-
             LaunchedEffect(Unit) {
                 viewModel.initData(db)
             }
@@ -94,6 +95,16 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.saveTempData(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.restoreTempData(this)
     }
 }
 
@@ -382,6 +393,14 @@ fun HomeContent(
                     IconButton(onClick = onOpenDrawer) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu")
                     }
+                },
+                actions = {
+                    if (vm.isCalculated) {
+                        val context = androidx.compose.ui.platform.LocalContext.current
+                        IconButton(onClick = { vm.shareResultAsImage(context) }) {
+                            Icon(Icons.Default.Share, contentDescription = "Share")
+                        }
+                    }
                 }
             )
         },
@@ -518,7 +537,8 @@ fun HomeContent(
 
                         Row(
                             modifier = Modifier.padding(top = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             androidx.compose.material3.OutlinedTextField(
                                 value = resident.prevReading,
@@ -529,6 +549,22 @@ fun HomeContent(
                                 modifier = Modifier.weight(1f),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
                             )
+
+                            IconButton(
+                                onClick = {
+                                    val temp = resident.prevReading
+                                    vm.residents[index] = resident.copy(
+                                        prevReading = resident.currReading,
+                                        currReading = temp
+                                    )
+                                }
+                            ) {
+                                Icon(
+                                    painter = androidx.compose.ui.res.painterResource(id = R.drawable.ic_swap),
+                                    contentDescription = "Swap",
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
 
                             androidx.compose.material3.OutlinedTextField(
                                 value = resident.currReading,

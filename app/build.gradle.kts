@@ -71,4 +71,7 @@ dependencies {
 
     // JSON 轉換工具
     implementation("com.google.code.gson:gson:2.10.1")
+
+    // QR Code 產生工具
+    implementation("com.google.zxing:core:3.5.3")
 }
