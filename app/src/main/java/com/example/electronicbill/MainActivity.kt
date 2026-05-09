@@ -585,7 +585,7 @@ fun HomeContent(
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 Text(
-                                    "${if (isZh) "💰 本期總額" else "Total Cost"}: ${formatMoney(resident.resultAmount)} ${if (isZh) "元" else "NTD"}",
+                                    "${if (isZh) "💰 本期總額" else "Total Cost"}: ${String.format(Locale.getDefault(), "%.0f", resident.resultAmount)} ${if (isZh) "元" else "NTD"}",
                                     color = MaterialTheme.colorScheme.primary,
                                     fontWeight = FontWeight.ExtraBold,
                                     style = MaterialTheme.typography.titleMedium
