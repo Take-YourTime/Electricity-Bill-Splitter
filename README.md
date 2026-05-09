@@ -17,7 +17,7 @@ This is an Android application designed specifically for family-style rental gro
 Click "release" on the right side of the page to download the latest version of the app's APK file.   
 Then, locate the APK file in your phone's file directory and select "Install this application".
 
-**-> Latest Version: 1.2.1 <-**
+**-> Latest Version: 1.3 <-**
 
 ---
 
@@ -83,6 +83,8 @@ Then, locate the APK file in your phone's file directory and select "Install thi
 ---
 
 ## 📸 介面預覽 | UI Preview
+
+Version: 1.2.1
 
 | 主頁面 | 功能欄 | 歷史紀錄 | 
 | ---- | ---- | ---- | 
