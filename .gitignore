@@ -1,30 +1,45 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# ===== Gradle & Build =====
+.gradle/
+/build/
+*/build/
+
+# ===== 本機設定檔 =====
 local.properties
 
+# ===== IDE / Android Studio =====
+*.iml
+/.idea/workspace.xml
+/.idea/tasks.xml
+/.idea/gradle.xml
+/.idea/assetWizardSettings.xml
+/.idea/dictionaries
+/.idea/libraries
+/.idea/caches
+/.idea/modules.xml
+/.idea/navEditor.xml
+/captures/
+.navigation/
 
+# ===== Mac 系統暫存 =====
+.DS_Store
 
-# 排除金鑰檔案
+# ===== NDK / C++ (若有用到 JNI) =====
+.externalNativeBuild/
+.cxx/
+obj/
+
+# ===== Log 日誌檔 =====
+*.log
+
+# ===== 資安相關 (金鑰檔案) =====
 *.jks
 *.keystore
+*.p12
 
-# 排除打包產出的中繼資料
+# ===== 排除編譯與打包產出的二進位檔 =====
+*.apk
+*.aab
+*.apks
 output-metadata.json
-
-# 排除混淆對照表
+app/release/
 app/build/outputs/mapping/
-
-# release file
-app/release
