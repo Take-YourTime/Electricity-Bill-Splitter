@@ -1,4 +1,4 @@
-# ⚡電費分攤助手  Electricity Bill Splitter
+# 電費分攤助手  Electricity Bill Splitter
 
 ![Android](https://img.shields.io/badge/Platform-Android-brightgreen.svg) 
 ![Kotlin](https://img.shields.io/badge/Language-Kotlin-blue.svg) 
@@ -10,7 +10,7 @@ This is an Android application designed specifically for family-style rental gro
 
 ---
 
-## ⬇️ 下載方式 | How to download?
+## 下載方式 | How to download?
 
 點選頁面右側的release，即可下載最新版本App的apk檔案，而後在手機中檔案目錄中找到該apk檔案，選擇「安裝此應用程式」。
 
@@ -21,7 +21,7 @@ Then, locate the APK file in your phone's file directory and select "Install thi
 
 ---
 
-## ✨ 功能特點 | Features
+## 功能特點 | Features
 
 - **自動計算公電 (Fair Allocation)**: 可自動試算公電度數，並精確平均分配給所有住戶。
   
@@ -39,7 +39,7 @@ Then, locate the APK file in your phone's file directory and select "Install thi
 
 ---
 
-## 📖 使用指南 | User Guide
+## 使用指南 | User Guide
 
 1. **輸入帳單總資訊 (Enter Bill Info)** 在主頁上方輸入台電帳單上的「總金額」與「總用電度數」。
    
@@ -53,7 +53,7 @@ Then, locate the APK file in your phone's file directory and select "Install thi
 
 ---
 
-## 🧮 計算邏輯 | Calculation Logic
+## 計算邏輯 | Calculation Logic
 
 本程式採用以下精確公式進行分攤：
 
@@ -68,7 +68,7 @@ Then, locate the APK file in your phone's file directory and select "Install thi
 
 ---
 
-## 🛠️ 開發技術 | Tech Stack
+## 開發技術 | Tech Stack
 
 | 項目 | 技術 / 函式庫 |
 | ---- | ---- |
@@ -82,7 +82,7 @@ Then, locate the APK file in your phone's file directory and select "Install thi
 
 ---
 
-## 📸 介面預覽 | UI Preview
+## 介面預覽 | UI Preview
 
 Version: 1.2.1
 
@@ -96,7 +96,7 @@ Version: 1.2.1
 
 ---
 
-## 📝 備註 (Notes)
+## 備註 (Notes)
 
 - 所有金額計算均採四捨五入至整數，度數顯示至小數點後兩位。
 - 數據皆儲存於手機本地端，確保您的隱私。
