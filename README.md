@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # Electricity Bill Splitter
-=======
-# 電費分攤助手  Electricity Bill Splitter
->>>>>>> 325b520f881fbd9dcaec40448c6e95e9fc118cd9
 
 ![Android](https://img.shields.io/badge/Platform-Android-brightgreen.svg) 
 ![Kotlin](https://img.shields.io/badge/Language-Kotlin-blue.svg) 
@@ -14,11 +10,7 @@ This app fairly splits each resident's electricity bill based on **Taipower bill
 
 ---
 
-<<<<<<< HEAD
 ## Download Instructions
-=======
-## 下載方式 | How to download?
->>>>>>> 325b520f881fbd9dcaec40448c6e95e9fc118cd9
 
 Click release on the right side of the page to download the latest APK file of the app. Then, find the APK file in your phone's file directory and select "Install this application".
 
@@ -32,11 +24,7 @@ https://www.virustotal.com/gui/home/upload
 
 ---
 
-<<<<<<< HEAD
 ## User Guide
-=======
-## 功能特點 | Features
->>>>>>> 325b520f881fbd9dcaec40448c6e95e9fc118cd9
 
 1. **Enter Bill Information** Enter the "current billing amount" and "current electricity usage" from the Taipower bill at the top of the main page.
 
@@ -50,31 +38,11 @@ https://www.virustotal.com/gui/home/upload
 
 ---
 
-<<<<<<< HEAD
 ## Calculation Logic
-=======
-## 使用指南 | User Guide
->>>>>>> 325b520f881fbd9dcaec40448c6e95e9fc118cd9
 
 This program uses the following precise formulas for bill splitting:
 
-<<<<<<< HEAD
 1. **Cost per Unit of Electricity**:  
-=======
-3. **填寫電表讀數 (Enter Meter Readings)** 輸入每位住戶電表的「前期」與「當期」讀數，系統會自動算出此用戶本期用電度數。
-
-4. **計算與存檔 (Calculate & Save)** 點擊「計算並存檔」後，系統會分配公電費並將計算結果儲存至歷史清單中。
-
-5. **查看詳細過程 (Detailed Breakdown)** 計算完成後，點擊下方的「查看詳細計算過程」按鈕，可以知曉每人電費的計算過程。
-
----
-
-## 計算邏輯 | Calculation Logic
-
-本程式採用以下精確公式進行分攤：
-
-1. **每度單價 (Unit Price)**:  
->>>>>>> 325b520f881fbd9dcaec40448c6e95e9fc118cd9
    $$Price_{unit} = \frac{Total\ Amount}{Total\ Units}$$
 
 2. **Shared Electricity Units**:  
@@ -85,11 +53,7 @@ This program uses the following precise formulas for bill splitting:
 
 ---
 
-<<<<<<< HEAD
 ## Features
-=======
-## 開發技術 | Tech Stack
->>>>>>> 325b520f881fbd9dcaec40448c6e95e9fc118cd9
 
 - **Automatic Shared Electricity Calculation**: Automatically estimates shared electricity usage and accurately splits it equally among all residents.
 
@@ -121,11 +85,7 @@ This program uses the following precise formulas for bill splitting:
 
 ---
 
-<<<<<<< HEAD
 ## UI Preview
-=======
-## 介面預覽 | UI Preview
->>>>>>> 325b520f881fbd9dcaec40448c6e95e9fc118cd9
 
 Version: 1.2.1
 
@@ -139,11 +99,7 @@ Version: 1.2.1
 
 ---
 
-<<<<<<< HEAD
 ## Notes
-=======
-## 備註 (Notes)
->>>>>>> 325b520f881fbd9dcaec40448c6e95e9fc118cd9
 
 - All monetary amounts are rounded to the nearest integer, and electricity units are displayed to two decimal places.
 - All data is stored locally on the phone to ensure your privacy.
