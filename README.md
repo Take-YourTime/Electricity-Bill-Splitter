@@ -1,6 +1,6 @@
 # Electricity Bill Splitter
 
->  [English] | [繁體中文](README-zh-TW.md)
+>  [English] | [繁體中文](README_zh-TW.md)
 
 ![Android](https://img.shields.io/badge/Platform-Android-brightgreen.svg) 
 ![Kotlin](https://img.shields.io/badge/Language-Kotlin-blue.svg) 
