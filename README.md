@@ -28,15 +28,15 @@ https://www.virustotal.com/gui/home/upload
 
 ## User Guide
 
-1. **Enter Bill Information** Enter the "current billing amount" and "current electricity usage" from the Taipower bill at the top of the main page.
+1. **Enter Bill Information**: Enter the "current billing amount" and "current electricity usage" from the Taipower bill at the top of the main page.
 
-2. **Manage Resident List** Tap the "+" button in the bottom-right corner to add a resident. You can tap the name field to customize the resident's name.
+2. **Manage Resident List**: Tap the "+" button in the bottom-right corner to add a resident. You can tap the name field to customize the resident's name.
 
-3. **Enter Meter Readings** Enter the "previous" and "current" meter readings for each resident's electricity meter.
+3. **Enter Meter Readings**: Enter the "previous" and "current" meter readings for each resident's electricity meter.
 
-4. **Calculate and Save** After tapping "Calculate and Save", the system calculates each resident's electricity fee, allocates the shared electricity fee, and saves the calculation result to the history list.
+4. **Calculate and Save**: After tapping "Calculate and Save", the system calculates each resident's electricity fee, allocates the shared electricity fee, and saves the calculation result to the history list.
 
-5. **View Detailed Process** After the calculation is complete, tap the "View Detailed Calculation Process" button below to see how each resident's electricity fee is calculated.
+5. **View Detailed Process**: After the calculation is complete, tap the "View Detailed Calculation Process" button below to see how each resident's electricity fee is calculated.
 
 ---
 
