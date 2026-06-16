@@ -1,5 +1,7 @@
 # 電費分攤助手
 
+>  [English](README.md) | [繁體中文]
+
 ![Android](https://img.shields.io/badge/Platform-Android-brightgreen.svg) 
 ![Kotlin](https://img.shields.io/badge/Language-Kotlin-blue.svg) 
 ![Compose](https://img.shields.io/badge/UI-Jetpack%20Compose-orange.svg)
