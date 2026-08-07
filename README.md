@@ -3,7 +3,7 @@
 >  [English] | [繁體中文](README_zh-TW.md)
 
 ![Android](https://img.shields.io/badge/Platform-Android-brightgreen.svg) 
-![Kotlin](https://img.shields.io/badge/Language-Kotlin-blue.svg) 
+![Kotlin](https://img.shields.io/badge/Language-Kotlin-D8B4FE.svg) 
 ![Compose](https://img.shields.io/badge/UI-Jetpack%20Compose-orange.svg)
 
 This is an Android application designed for tenants living in **shared rental suites** or **shared rental rooms**. It is especially useful for tenants who have individual electricity meters but do not know the total meter reading.
