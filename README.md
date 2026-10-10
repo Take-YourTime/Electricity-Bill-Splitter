@@ -12,7 +12,7 @@ This app fairly splits each resident's electricity bill based on **Taipower bill
 
 ---
 
-## Download Instructions
+## Download Steps
 
 Click release on the right side of the page to download the latest APK file of the app. Then, find the APK file in your phone's file directory and select "Install this application".
 
